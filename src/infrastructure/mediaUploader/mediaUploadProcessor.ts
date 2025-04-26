@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as ffmpeg from 'fluent-ffmpeg';
 import * as fs from 'fs';
 import * as path from 'path';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { MediaUploader } from 'src/service/interface/mediaUploader.interface';
+import azureConfig from 'src/common/config/azure.config';
+import { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class MediaUploadProcessor implements MediaUploader {
-  private readonly containerName = 'your-container-name';
-  private readonly azureConnectionString = 'your-azure-blob-connection-string';
+  constructor(
+    @Inject(azureConfig.KEY)
+    private readonly config: ConfigType<typeof azureConfig>,
+  ) {}
 
   async processAndUpload(
     file: Express.Multer.File,
@@ -102,10 +106,10 @@ export class MediaUploadProcessor implements MediaUploader {
 
   private async uploadToAzure(filePath: string): Promise<string> {
     const blobServiceClient = BlobServiceClient.fromConnectionString(
-      this.azureConnectionString,
+      this.config.blobConnection,
     );
     const containerClient = blobServiceClient.getContainerClient(
-      this.containerName,
+      this.config.blobContainer,
     );
 
     const blobName = path.basename(filePath);

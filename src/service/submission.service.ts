@@ -11,6 +11,6 @@ export class SubmissionService {
     submitText: string;
     videoFile: Buffer;
   }) {
-    console.log(args);
+    return args;
   }
 }

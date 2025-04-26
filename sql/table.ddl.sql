@@ -1,13 +1,12 @@
     -- 학습자 정보
-CREATE TABLE students (
+CREATE TABLE student (
     id CHAR(26) PRIMARY KEY, -- ULID
     name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
 -- 제출물
-CREATE TABLE submissions (
+CREATE TABLE submission (
     id CHAR(26) PRIMARY KEY, -- ULID
     student_id CHAR(26) NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     component_type VARCHAR(100) NOT NULL, -- 예: Essay Writing
@@ -29,7 +28,7 @@ CREATE TABLE submission_media (
 );
 
 -- 평가/재평가 로그
-CREATE TABLE submission_logs (
+CREATE TABLE submission_log (
     id CHAR(26) PRIMARY KEY, -- ULID
     submission_id CHAR(26) NOT NULL REFERENCES submissions(id) ON DELETE CASCADE,
     log_type VARCHAR(50),
@@ -39,7 +38,7 @@ CREATE TABLE submission_logs (
 );
 
 -- 재평가 요청 + 결과
-CREATE TABLE revisions (
+CREATE TABLE revision (
     id CHAR(26) PRIMARY KEY, -- ULID
     submission_id CHAR(26) NOT NULL REFERENCES submissions(id) ON DELETE CASCADE,
     request_reason TEXT,
@@ -48,8 +47,8 @@ CREATE TABLE revisions (
     processed_at TIMESTAMP
 );
 
--- 기간별 통계 테이블
-CREATE TABLE stats (
+-- 기간별 통계 테이블s
+CREATE TABLE stat (
     id CHAR(26) PRIMARY KEY, -- ULID
     period_type VARCHAR(10) CHECK (period_type IN ('daily', 'weekly', 'monthly')),
     period_start DATE,

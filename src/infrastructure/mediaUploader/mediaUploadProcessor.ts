@@ -2,7 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as ffmpeg from 'fluent-ffmpeg';
 import * as fs from 'fs';
 import * as path from 'path';
-import { BlobServiceClient } from '@azure/storage-blob';
+import {
+  BlobSASPermissions,
+  BlobServiceClient,
+  ContainerClient,
+  generateBlobSASQueryParameters,
+  SASProtocol,
+  StorageSharedKeyCredential,
+} from '@azure/storage-blob';
 import { MediaUploader } from 'src/service/interface/mediaUploader.interface';
 import azureConfig from 'src/common/config/azure.config';
 import { ConfigType } from '@nestjs/config';
@@ -18,7 +25,10 @@ export class MediaUploadProcessor implements MediaUploader {
     file: Express.Multer.File,
   ): Promise<{ videoUrl: string; audioUrl: string }> {
     if (!file) {
-      throw new Error('No file provided');
+      return {
+        videoUrl: null,
+        audioUrl: null,
+      };
     }
 
     //1. file 에 대해서 local 로 저장장
@@ -56,7 +66,7 @@ export class MediaUploadProcessor implements MediaUploader {
   private cropVideo(inputPath: string, outputPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
       ffmpeg(inputPath)
-        .videoFilters('crop=640:720:640:0')
+        .videoFilters('crop=in_w/2:in_h:in_w/2:0')
         .audioCodec('copy')
         .on('end', () => {
           console.log('Crop completed');
@@ -108,6 +118,7 @@ export class MediaUploadProcessor implements MediaUploader {
     const blobServiceClient = BlobServiceClient.fromConnectionString(
       this.config.blobConnection,
     );
+
     const containerClient = blobServiceClient.getContainerClient(
       this.config.blobContainer,
     );
@@ -120,12 +131,39 @@ export class MediaUploadProcessor implements MediaUploader {
       blobHTTPHeaders: { blobContentType: this.getContentType(blobName) },
     });
 
-    return blockBlobClient.url;
+    const sasUrl = await this.generateSasUrl(containerClient, blobName);
+    return sasUrl;
   }
 
   private getContentType(fileName: string): string {
     if (fileName.endsWith('.mp4')) return 'video/mp4';
     if (fileName.endsWith('.mp3')) return 'audio/mpeg';
     return 'application/octet-stream';
+  }
+
+  // SAS URL 을 통한 read 를 보기위함
+  private async generateSasUrl(
+    containerClient: ContainerClient,
+    blobName: string,
+  ): Promise<string> {
+    const sharedKeyCredential = new StorageSharedKeyCredential(
+      this.config.blobAccName, // 스토리지 계정명
+      this.config.blobAccKey, // 스토리지 계정 키
+    );
+
+    const sasToken = generateBlobSASQueryParameters(
+      {
+        containerName: containerClient.containerName,
+        blobName,
+        permissions: BlobSASPermissions.parse('r'),
+        startsOn: new Date(),
+        expiresOn: new Date(new Date().valueOf() + 3600 * 1000), // 1시간 유효
+        protocol: SASProtocol.HttpsAndHttp,
+      },
+      sharedKeyCredential,
+    ).toString();
+
+    const blobClient = containerClient.getBlockBlobClient(blobName);
+    return `${blobClient.url}?${sasToken}`;
   }
 }

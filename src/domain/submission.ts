@@ -35,34 +35,20 @@ export class Submission {
     this.updatedAt = args.updatedAt;
   }
 
-  static Submit(args: {
+  static createSubmission(args: {
     id: string;
     componentType: ComponentType;
     submitText: string;
-    status: SubmissionStatus;
     result: any;
   }) {
     const now = new Date().toISOString();
     return new Submission({
       ...args,
       score: 0,
-      status: SubmissionStatus.PENDING,
+      status: SubmissionStatus.SUCCESS,
       submissionMedia: null,
       createdAt: now,
       updatedAt: null,
     });
-  }
-
-  finishEvalutate(args: { result: any; score: number }) {
-    this.result = args.result;
-    this.score = args.score;
-    this.status = SubmissionStatus.SUCCESS;
-    this.updatedAt = new Date().toISOString();
-  }
-
-  failEvaluate(result: any) {
-    this.result = result;
-    this.status = SubmissionStatus.FAILED;
-    this.updatedAt = new Date().toISOString();
   }
 }

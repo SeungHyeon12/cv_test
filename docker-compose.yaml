@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-evaluation-app
+    ports:
+      - '8080:8080'
+    restart: always
+
   postgres:
     image: postgres:16
     container_name: test_rdbs

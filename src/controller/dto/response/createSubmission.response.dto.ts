@@ -70,6 +70,6 @@ export class CreateSubmissionResponseDTO {
   mediaUrl?: MediaUrlDto;
 
   @ApiProperty({ description: 'API 지연 시간 (ms)' })
-  @IsNumber()
+  @IsOptional()
   apiLatency: number;
 }

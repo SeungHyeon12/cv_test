@@ -15,6 +15,7 @@ CREATE TABLE submission (
     score INTEGER, -- 평가 점수
     result JSONB, -- 평가 결과
     created_at TIMESTAMP DEFAULT NOW()
+    updated_at TIMESTAMP
 );
 
 -- 제출 미디어

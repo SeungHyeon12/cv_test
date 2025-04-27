@@ -25,6 +25,7 @@ export class AzureAIProcessor implements AIProcessor {
     score: number;
     feedback: string;
     highlights: string[];
+    highlightSubmitText: string;
   }> {
     const response = await this.client.chat.completions.create({
       stream: false,
@@ -84,7 +85,33 @@ export class AzureAIProcessor implements AIProcessor {
       );
     }
 
-    return { score, feedback, highlights };
+    return {
+      score,
+      feedback,
+      highlights,
+      highlightSubmitText: this.generateHighlightSubmitText(essay, highlights),
+    };
+  }
+
+  private generateHighlightSubmitText(
+    submitText: string,
+    highlights: string[],
+  ): string {
+    let result = submitText;
+
+    for (const highlight of highlights) {
+      if (!highlight) continue;
+
+      const escapedHighlight = highlight.replace(
+        /[-\/\\^$*+?.()|[\]{}]/g,
+        '\\$&',
+      );
+
+      const regex = new RegExp(escapedHighlight, 'g');
+      result = result.replace(regex, `<b>${highlight}</b>`);
+    }
+
+    return result;
   }
 
   private generateUserEssay(essay: string) {

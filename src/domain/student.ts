@@ -13,7 +13,6 @@ export class Student {
     return new Student({
       id: args.id,
       name: args.name,
-
       createdAt: new Date().toISOString(),
     });
   }

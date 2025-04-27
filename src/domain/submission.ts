@@ -1,3 +1,4 @@
+import { createUniqueId } from 'src/common/utils/createUniqueId.function';
 import { ComponentType } from './vo/enum/componentType.enum';
 import { SubmissionStatus } from './vo/enum/submissionStatus.enum';
 import { SubmissionMedia } from './vo/submissionMedia';
@@ -38,18 +39,48 @@ export class Submission {
     this.updatedAt = args.updatedAt;
   }
 
-  static createSubmission(args: {
+  static successSubmission(args: {
     id: string;
     studentId: string;
     componentType: ComponentType;
     submitText: string;
+    score: number;
+    videoUrl?: string;
+    audioUrl?: string;
     result: any;
+  }) {
+    const now = new Date().toISOString();
+    let submissionMedia = null;
+    if (args.videoUrl || args.audioUrl) {
+      submissionMedia = SubmissionMedia.createOf({
+        id: createUniqueId(),
+        submissionId: args.id,
+        videoUrl: args.videoUrl,
+        audioUrl: args.audioUrl,
+      });
+    }
+    return new Submission({
+      ...args,
+      score: args.score,
+      status: SubmissionStatus.SUCCESS,
+      submissionMedia,
+      createdAt: now,
+      updatedAt: null,
+    });
+  }
+
+  static failSubmission(args: {
+    id: string;
+    studentId: string;
+    componentType: ComponentType;
+    submitText: string;
   }) {
     const now = new Date().toISOString();
     return new Submission({
       ...args,
+      result: null,
       score: 0,
-      status: SubmissionStatus.SUCCESS,
+      status: SubmissionStatus.FAILED,
       submissionMedia: null,
       createdAt: now,
       updatedAt: null,

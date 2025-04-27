@@ -12,12 +12,17 @@ class MediaUrlDto {
   @ApiPropertyOptional({ description: '비디오 URL', type: String })
   @IsOptional()
   @IsString()
-  video?: string;
+  videoUrl?: string;
 
   @ApiPropertyOptional({ description: '오디오 URL', type: String })
   @IsOptional()
   @IsString()
-  audio?: string;
+  audioUrl?: string;
+
+  constructor(args: { videoUrl?: string; audioUrl?: string }) {
+    this.videoUrl = args.videoUrl;
+    this.audioUrl = args.audioUrl;
+  }
 }
 
 export class CreateSubmissionResponseDTO {
@@ -30,8 +35,8 @@ export class CreateSubmissionResponseDTO {
   message: string | null;
 
   @ApiProperty({ description: '학생 ID' })
-  @IsNumber()
-  studentId: number;
+  @IsString()
+  studentId: string;
 
   @ApiProperty({ description: '학생 이름' })
   @IsString()
@@ -72,4 +77,29 @@ export class CreateSubmissionResponseDTO {
   @ApiProperty({ description: 'API 지연 시간 (ms)' })
   @IsOptional()
   apiLatency: number;
+
+  constructor(args: {
+    result: string;
+    message: string | null;
+    studentId: string;
+    studentName: string;
+    score: number;
+    feedback: string;
+    hightlights: string[];
+    highlightSubmitText: string;
+    mediaUrl: {
+      audioUrl: string;
+      videoUrl: string;
+    };
+  }) {
+    this.result = args.result;
+    this.message = args.message;
+    this.studentId = args.studentId;
+    this.studentName = args.studentName;
+    this.score = args.score;
+    this.feedback = args.feedback;
+    this.highlights = args.hightlights;
+    this.highlightSubmitText = args.highlightSubmitText;
+    this.mediaUrl = new MediaUrlDto({ ...args.mediaUrl });
+  }
 }

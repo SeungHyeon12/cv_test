@@ -4,6 +4,8 @@ import { MediaUploadProcessor } from 'src/infrastructure/mediaUploader/mediaUplo
 import { ComponentType } from 'src/domain/vo/enum/componentType.enum';
 import { Submission } from 'src/domain/submission';
 import { createUniqueId } from 'src/common/utils/createUniqueId.function';
+import { IStudentRepository } from 'src/service/interface/studentRepository.interface';
+import { ISubmissionRepository } from 'src/service/interface/submissionRepository.interface';
 
 @Injectable()
 export class SubmissionService {
@@ -12,6 +14,10 @@ export class SubmissionService {
     private readonly aiProcessor: AIProcessor,
     @Inject('MEDIA_UPLOADER')
     private readonly mediaUploadProcessor: MediaUploadProcessor,
+    @Inject('STUDENT_REPOSITORY')
+    private readonly studentRepo: IStudentRepository,
+    @Inject('SUBMISSION_REPOSITORY')
+    private readonly submissionRepo: ISubmissionRepository,
   ) {}
 
   async createSubmission(args: {
@@ -32,18 +38,41 @@ export class SubmissionService {
       mediaProcessedResult.status === 'rejected' ||
       aiSubmissionResult.status === 'rejected'
     ) {
-      //TODO 에러 관련 로그 저장 및 error throws
+      const failedSubmission = Submission.failSubmission({
+        id: createUniqueId(),
+        studentId: 'test',
+        componentType: args.componentType,
+        submitText: args.submitText,
+      });
+      await this.submissionRepo.save(failedSubmission);
+      throw new Error('failed to process mediaProcess or AI submission');
     }
 
-    const newSubMission = Submission.createSubmission({
+    const successSubMission = Submission.successSubmission({
       id: createUniqueId(),
       studentId: 'test',
       componentType: args.componentType,
       submitText: args.submitText,
-      result: aiSubmissionResult,
+      result: aiSubmissionResult.value,
+      score: aiSubmissionResult.value.score,
+      videoUrl: mediaProcessedResult.value?.videoUrl,
+      audioUrl: mediaProcessedResult.value?.audioUrl,
     });
+    await this.submissionRepo.save(successSubMission);
 
-    //TODO newSubmission 에대한 값 저장
-    console.log(newSubMission);
+    return {
+      result: 'ok',
+      message: null,
+      studentId: args.studentId,
+      studentName: args.studentName,
+      score: aiSubmissionResult.value?.score,
+      feedback: aiSubmissionResult.value?.feedback,
+      hightlights: aiSubmissionResult.value?.highlights,
+      highlightSubmitText: aiSubmissionResult.value?.highlightSubmitText,
+      mediaUrl: {
+        audioUrl: mediaProcessedResult.value?.audioUrl,
+        videoUrl: mediaProcessedResult.value?.videoUrl,
+      },
+    };
   }
 }

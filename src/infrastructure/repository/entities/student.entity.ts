@@ -1,7 +1,7 @@
 import { Student } from 'src/domain/student';
 import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 
-@Entity('student')
+@Entity('students')
 export class StudentEntity {
   @PrimaryColumn({ type: 'char', length: 26 })
   id: string;
@@ -9,7 +9,7 @@ export class StudentEntity {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: string;
 
   constructor(student: Student) {
@@ -18,5 +18,13 @@ export class StudentEntity {
       this.name = student.name;
       this.createdAt = student.createdAt;
     }
+  }
+
+  toDomain() {
+    return new Student({
+      id: this.id,
+      name: this.name,
+      createdAt: this.createdAt,
+    });
   }
 }

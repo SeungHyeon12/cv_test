@@ -5,6 +5,8 @@ import { MediaUploadProcessor } from './mediaUploader/mediaUploadProcessor';
 import { DataSource } from 'typeorm';
 import azureConfig from 'src/common/config/azure.config';
 import databaseConfig from 'src/common/config/database.config';
+import { StudentRepository } from 'src/infrastructure/repository/student.repository';
+import { SubmissionRepository } from 'src/infrastructure/repository/submission.repository';
 
 @Module({
   imports: [
@@ -21,6 +23,14 @@ import databaseConfig from 'src/common/config/database.config';
       useClass: MediaUploadProcessor,
     },
     {
+      provide: 'STUDENT_REPOSITORY',
+      useClass: StudentRepository,
+    },
+    {
+      provide: 'SUBMISSION_REPOSITORY',
+      useClass: SubmissionRepository,
+    },
+    {
       provide: 'CV_DATA_SOURCE',
       useFactory: async (config: ConfigType<typeof databaseConfig>) => {
         const dataSource = new DataSource({
@@ -32,6 +42,11 @@ import databaseConfig from 'src/common/config/database.config';
       inject: [databaseConfig.KEY],
     },
   ],
-  exports: ['AI_PROCESSOR', 'MEDIA_UPLOADER'],
+  exports: [
+    'AI_PROCESSOR',
+    'MEDIA_UPLOADER',
+    'STUDENT_REPOSITORY',
+    'SUBMISSION_REPOSITORY',
+  ],
 })
 export class InfrastructureModule {}

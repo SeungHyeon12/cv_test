@@ -9,6 +9,7 @@ import { CreateSubmissionReqyestDTO } from './dto/request/createSubmission.reque
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes } from '@nestjs/swagger';
 import { SubmissionService } from 'src/service/submission.service';
+import { CreateSubmissionResponseDTO } from 'src/controller/dto/response/createSubmission.response.dto';
 
 @Controller()
 export class SubmissionEvaluationController {
@@ -20,13 +21,14 @@ export class SubmissionEvaluationController {
   async createSubmission(
     @Body() createSubmissionRequest: CreateSubmissionReqyestDTO,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<string> {
-    await this.submissionService.createSubmission({
+  ): Promise<CreateSubmissionResponseDTO> {
+    const data = await this.submissionService.createSubmission({
       ...createSubmissionRequest,
       studentId: 'sample',
       studentName: 'sample',
       videoFile: file,
     });
-    return '';
+
+    return new CreateSubmissionResponseDTO(data);
   }
 }

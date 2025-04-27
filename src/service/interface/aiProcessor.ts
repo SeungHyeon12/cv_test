@@ -3,5 +3,6 @@ export interface AIProcessor {
     score: number;
     feedback: string;
     highlights: string[];
+    highlightSubmitText: string;
   }>;
 }

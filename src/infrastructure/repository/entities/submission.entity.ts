@@ -5,14 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
-  JoinColumn,
 } from 'typeorm';
 import { SubmissionMediaEntity } from './submissionMedia.entity';
 import { ComponentType } from 'src/domain/vo/enum/componentType.enum';
 import { SubmissionStatus } from 'src/domain/vo/enum/submissionStatus.enum';
 import { Submission } from 'src/domain/submission';
 
-@Entity('submission')
+@Entity('submissions')
 export class SubmissionEntity {
   @PrimaryColumn({ type: 'char', length: 26 })
   id: string;
@@ -36,7 +35,6 @@ export class SubmissionEntity {
   result: any;
 
   @OneToOne(() => SubmissionMediaEntity, { nullable: true })
-  @JoinColumn({ name: 'submission_media_id' })
   submissionMedia: SubmissionMediaEntity | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })

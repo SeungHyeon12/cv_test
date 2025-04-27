@@ -33,9 +33,6 @@ export class SubmissionMediaEntity {
   @Column({ name: 'audio_url', type: 'text', nullable: true })
   audioUrl?: string;
 
-  @Column({ type: 'jsonb', nullable: true })
-  metadata?: Record<string, any>;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: string;
 
@@ -45,7 +42,6 @@ export class SubmissionMediaEntity {
       this.submissionId = submissionMedia.submissionId;
       this.videoUrl = submissionMedia.videoUrl;
       this.audioUrl = submissionMedia.audioUrl;
-      this.metadata = submissionMedia.metadata;
       this.createdAt = submissionMedia.createdAt;
     }
   }

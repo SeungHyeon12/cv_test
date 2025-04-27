@@ -9,7 +9,7 @@ services:
     command: >
       sh -c "
         echo '🛠️ Generate Migration' &&
-        node --require tsconfig-paths/register --require ts-node/register ./node_modules/typeorm/cli.js migration:generate ./src/migration/migrations/InitMigration -d src/migration/migration.dataSource.ts &&
+        node --require tsconfig-paths/register --require ts-node/register ./node_modules/typeorm/cli.js migration:generate ./src/migration/migrations/InitMigration -d src/migration/migration.dataSource.ts || true &&
 
         echo '🏃 Run Migration' &&
         node --require tsconfig-paths/register --require ts-node/register ./node_modules/typeorm/cli.js migration:run -d src/migration/migration.dataSource.ts &&

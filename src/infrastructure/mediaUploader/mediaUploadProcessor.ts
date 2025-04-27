@@ -69,11 +69,9 @@ export class MediaUploadProcessor implements MediaUploader {
         .videoFilters('crop=in_w/2:in_h:in_w/2:0')
         .audioCodec('copy')
         .on('end', () => {
-          console.log('Crop completed');
           resolve();
         })
         .on('error', (err) => {
-          console.error('Crop error:', err);
           reject(err);
         })
         .save(outputPath);
@@ -85,11 +83,9 @@ export class MediaUploadProcessor implements MediaUploader {
       ffmpeg(inputPath)
         .noAudio()
         .on('end', () => {
-          console.log('Crop completed');
           resolve();
         })
         .on('error', (err) => {
-          console.error('Crop error:', err);
           reject(err);
         })
         .save(outputPath);
@@ -103,7 +99,6 @@ export class MediaUploadProcessor implements MediaUploader {
         .audioCodec('libmp3lame')
         .audioQuality(0)
         .on('end', () => {
-          console.log('Crop completed');
           resolve();
         })
         .on('error', (err) => {

@@ -37,6 +37,7 @@ export class SubmissionService {
 
     const newSubMission = Submission.createSubmission({
       id: createUniqueId(),
+      studentId: 'test',
       componentType: args.componentType,
       submitText: args.submitText,
       result: aiSubmissionResult,

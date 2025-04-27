@@ -6,9 +6,36 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: ai-evaluation-app
+    command: >
+      sh -c "
+      node --require ts-node/register ./node_modules/typeorm/cli.js migration:run -d dist/migration/migration.dataSource.js &&
+      node dist/main.js
+      "
     ports:
       - '8080:8080'
+    depends_on:
+      - postgres
+      - redis-local
     restart: always
+    environment:
+      # DB 관련
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: test
+      DB_PASSWORD: test
+      DB_DATABASE: cv
+
+      # Azure Blob 관련
+      AZURE_ACCOUNT_KEY: 'YJmlXiE1TjOVccVbBqc3t06XB+V6xzpN8/A0ZYoFh9mcjsCH384Tfu7Cll4r3NXhxwfmEil2NtAt+AStPZl7Gw=='
+      AZURE_ACCOUNT_NAME: devtaskblob
+      AZURE_CONNECTION_STRING: 'DefaultEndpointsProtocol=https;AccountName=devtaskblob;AccountKey=YJmlXiE1TjOVccVbBqc3t06XB+V6xzpN8/A0ZYoFh9mcjsCH384Tfu7Cll4r3NXhxwfmEil2NtAt+AStPZl7Gw==;EndpointSuffix=core.windows.net'
+      AZURE_CONTAINER: task
+
+      # Azure OpenAI 관련
+      AZURE_ENDPOINT_URL: 'https://ilearn-jaea.openai.azure.com/'
+      AZURE_ENDPINT_KEY: '206c3640a4584b839e2fe8c501de68bc'
+      OPEN_API_VERSION: '2023-05-15'
+      AZURE_OPENAI_DEPLOYMENT_NAME: feedback-01
 
   postgres:
     image: postgres:16

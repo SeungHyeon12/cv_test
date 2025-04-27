@@ -21,4 +21,6 @@ COPY . .
 # 빌드 (NestJS는 보통 build 해놓고 실행)
 RUN npm run build
 
+EXPOSE 8080
+
 CMD ["npm", "run" ,"start"]

@@ -4,6 +4,7 @@ import { SubmissionMedia } from './vo/submissionMedia';
 
 export class Submission {
   public readonly id: string;
+  public readonly studentId: string;
   public componentType: ComponentType;
   public submitText: string;
   public status: SubmissionStatus;
@@ -15,6 +16,7 @@ export class Submission {
 
   constructor(args: {
     id: string;
+    studentId: string;
     componentType: ComponentType;
     submitText: string;
     status: SubmissionStatus;
@@ -25,6 +27,7 @@ export class Submission {
     updatedAt: string;
   }) {
     this.id = args.id;
+    this.studentId = args.studentId;
     this.componentType = args.componentType;
     this.submitText = args.submitText;
     this.status = args.status;
@@ -37,6 +40,7 @@ export class Submission {
 
   static createSubmission(args: {
     id: string;
+    studentId: string;
     componentType: ComponentType;
     submitText: string;
     result: any;

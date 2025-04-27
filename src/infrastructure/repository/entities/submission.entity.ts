@@ -1,6 +1,3 @@
-import { Submission } from 'src/domain/submission';
-import { ComponentType } from 'src/domain/vo/enum/componentType.enum';
-import { SubmissionStatus } from 'src/domain/vo/enum/submissionStatus.enum';
 import {
   Entity,
   Column,
@@ -11,6 +8,9 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { SubmissionMediaEntity } from './submissionMedia.entity';
+import { ComponentType } from 'src/domain/vo/enum/componentType.enum';
+import { SubmissionStatus } from 'src/domain/vo/enum/submissionStatus.enum';
+import { Submission } from 'src/domain/submission';
 
 @Entity('submission')
 export class SubmissionEntity {

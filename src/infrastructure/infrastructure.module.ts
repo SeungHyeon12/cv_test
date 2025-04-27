@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
-import azureConfig from 'src/common/config/azure.config';
 import { AzureAIProcessor } from './aiProcessor/azureAIProcessor';
 import { MediaUploadProcessor } from './mediaUploader/mediaUploadProcessor';
-import databaseConfig from 'src/common/config/database.config';
 import { DataSource } from 'typeorm';
+import azureConfig from 'src/common/config/azure.config';
+import databaseConfig from 'src/common/config/database.config';
 
 @Module({
   imports: [

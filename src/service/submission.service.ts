@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AIProcessor } from './interface/aiProcessor';
 import { MediaUploadProcessor } from 'src/infrastructure/mediaUploader/mediaUploadProcessor';
+import { ComponentType } from 'src/domain/vo/enum/componentType.enum';
 import { Submission } from 'src/domain/submission';
 import { createUniqueId } from 'src/common/utils/createUniqueId.function';
-import { ComponentType } from 'src/domain/vo/enum/componentType.enum';
 
 @Injectable()
 export class SubmissionService {

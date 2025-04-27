@@ -8,8 +8,14 @@ services:
     container_name: ai-evaluation-app
     command: >
       sh -c "
-      node --require ts-node/register ./node_modules/typeorm/cli.js migration:run -d dist/migration/migration.dataSource.js &&
-      node dist/main.js
+        echo '🛠️ Generate Migration' &&
+        node --require tsconfig-paths/register --require ts-node/register ./node_modules/typeorm/cli.js migration:generate ./src/migration/migrations/InitMigration -d src/migration/migration.dataSource.ts &&
+
+        echo '🏃 Run Migration' &&
+        node --require tsconfig-paths/register --require ts-node/register ./node_modules/typeorm/cli.js migration:run -d src/migration/migration.dataSource.ts &&
+
+        echo '🚀 Start App' &&
+        npm run start
       "
     ports:
       - '8080:8080'
@@ -17,6 +23,8 @@ services:
       - postgres
       - redis-local
     restart: always
+    volumes:
+      - ./src/migration/migrations:/app/src/migration/migrations
     environment:
       # DB 관련
       DB_HOST: postgres
@@ -39,7 +47,7 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: test_rdbs
+    container_name: test-rdbs
     restart: always
     ports:
       - '5432:5432'
@@ -52,7 +60,7 @@ services:
 
   redis-local:
     image: 'redis:latest'
-    container_name: redis
+    container_name: test-redis
     hostname: redis
     ports:
       - '6379:6379'

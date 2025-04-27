@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import azureConfig from 'src/common/config/azure.config';
 import { ConfigType } from '@nestjs/config';
 import { AzureOpenAI } from 'openai';
 import { SystemPrompt } from './systemPrompts';
+import azureConfig from 'src/common/config/azure.config';
 import { AIProcessor } from 'src/service/interface/aiProcessor';
 
 @Injectable()

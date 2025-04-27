@@ -10,9 +10,9 @@ import {
   SASProtocol,
   StorageSharedKeyCredential,
 } from '@azure/storage-blob';
+import { ConfigType } from '@nestjs/config';
 import { MediaUploader } from 'src/service/interface/mediaUploader.interface';
 import azureConfig from 'src/common/config/azure.config';
-import { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class MediaUploadProcessor implements MediaUploader {

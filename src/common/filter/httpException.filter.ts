@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { CommonResponseDto } from 'src/common/response/commonResponseDTO';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -28,9 +29,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = { message: 'Internal server error' };
     }
 
-    response.status(status).json({
-      ...message,
-      apiLatency: latency,
-    });
+    response.status(status).json(
+      new CommonResponseDto<null>({
+        result: 'falied',
+        message,
+        data: null,
+        apiLatency: latency,
+      }),
+    );
   }
 }

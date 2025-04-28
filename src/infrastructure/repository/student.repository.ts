@@ -30,4 +30,15 @@ export class StudentRepository implements IStudentRepository {
 
     return entity.toDomain();
   }
+
+  async findByName(studentName: string): Promise<Student> {
+    const entity = await this.dataSource
+      .createQueryBuilder(StudentEntity, 'students')
+      .where('students.name = :studentName', {
+        studentName,
+      })
+      .getOne();
+
+    return entity.toDomain();
+  }
 }

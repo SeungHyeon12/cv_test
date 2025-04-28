@@ -2,7 +2,7 @@ import { IsEnum, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ComponentType } from 'src/domain/vo/enum/componentType.enum';
 
-export class CreateSubmissionReqyestDTO {
+export class CreateSubmissionRequestDTO {
   @ApiProperty({
     description: '과제 유형',
     enum: ComponentType,

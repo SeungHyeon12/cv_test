@@ -6,6 +6,9 @@ import { ServiceModule } from './service/service.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { LatencyInterceptor } from './common/interceptor/latency.interceptor';
 import { HttpExceptionFilter } from './common/filter/httpException.filter';
+import { UserController } from 'src/controller/user.controller';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from 'src/common/strategy/jwtStrategy';
 
 @Module({
   providers: [
@@ -17,8 +20,9 @@ import { HttpExceptionFilter } from './common/filter/httpException.filter';
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
+    JwtStrategy,
   ],
-  controllers: [SubmissionEvaluationController],
-  imports: [CommonModule, InfrastructureModule, ServiceModule],
+  controllers: [SubmissionEvaluationController, UserController],
+  imports: [CommonModule, InfrastructureModule, ServiceModule, PassportModule],
 })
 export class AppModule {}

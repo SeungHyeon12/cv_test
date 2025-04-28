@@ -10,9 +10,19 @@ async function bootstrap() {
     .setDescription('submission evaluation swagger')
     .setVersion('1.0')
     .addTag('submission evaluation')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'accessToken',
+    )
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, documentFactory);
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('swagger', app, document);
 
   await app.listen(process.env.PORT ?? 8080);
 }

@@ -45,6 +45,9 @@ services:
       OPEN_API_VERSION: '2023-05-15'
       AZURE_OPENAI_DEPLOYMENT_NAME: feedback-01
 
+      # jwt secret 관련
+      JWT_SECRET: test
+
   postgres:
     image: postgres:16
     container_name: test-rdbs

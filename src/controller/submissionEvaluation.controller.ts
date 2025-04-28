@@ -3,25 +3,41 @@ import {
   Controller,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { CreateSubmissionReqyestDTO } from './dto/request/createSubmission.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SubmissionService } from 'src/service/submission.service';
 import { CreateSubmissionResponseDTO } from 'src/controller/dto/response/createSubmission.response.dto';
+import { CommonResponseDto } from 'src/common/response/commonResponseDTO';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiCommonOkResponse } from 'src/common/response/decorator/commonOkResponse.deocrator';
+import { CreateSubmissionRequestDTO } from 'src/controller/dto/request/createSubmission.request.dto';
 
-@Controller()
+@ApiTags('Submission')
+@Controller('/v1/submissions')
 export class SubmissionEvaluationController {
   constructor(private readonly submissionService: SubmissionService) {}
 
-  @Post('/v1/submissions')
+  @Post()
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('videoFile'))
+  @ApiOperation({
+    summary: '영상 및 데이터 feedback 요청',
+  })
+  @ApiCommonOkResponse(CreateSubmissionResponseDTO)
   @ApiConsumes('multipart/form-data')
   async createSubmission(
-    @Body() createSubmissionRequest: CreateSubmissionReqyestDTO,
+    @Body() createSubmissionRequest: CreateSubmissionRequestDTO,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<CreateSubmissionResponseDTO> {
+  ) {
     const data = await this.submissionService.createSubmission({
       ...createSubmissionRequest,
       studentId: 'sample',
@@ -29,6 +45,8 @@ export class SubmissionEvaluationController {
       videoFile: file,
     });
 
-    return new CreateSubmissionResponseDTO(data);
+    return new CommonResponseDto<CreateSubmissionResponseDTO>({
+      data: new CreateSubmissionResponseDTO(data),
+    });
   }
 }
